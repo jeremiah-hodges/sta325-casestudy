@@ -1,0 +1,77 @@
+---
+title: "Case Study"
+author: "Abdel Shehata"
+date: "2022-10-26"
+output: pdf_document
+---
+
+```{r, echo=FALSE, message=FALSE}
+#| label: load-pkg-data
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+library(knitr)
+library(recipes)
+library(caret)
+library(InformationValue)
+library(ISLR)
+library(MASS)
+library(nnet)
+library(Stat2Data)
+```
+
+## Introduction and Data
+
+### Introduction
+
+
+
+### Data Introduction
+
+
+
+
+### Exploratory Data Analysis
+
+
+
+## Methodology
+
+### Linear 
+
+#### Linear Fitting
+
+
+#### Best AiC model with interactions
+
+
+#### Model Evaluation (Linear)
+
+
+### Complex Model 
+
+#### Best Degree Model
+
+#### Model Evaluation?
+
+
+
+
+
+
+
+
+## Results (Final Models)
+
+
+
+## Discussion & Conclusion 
+
+
+
+## References
