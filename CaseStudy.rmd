@@ -23,6 +23,10 @@ library(ISLR)
 library(MASS)
 library(nnet)
 library(Stat2Data)
+library(GGally)
+library(leaps)
+library(arm)
+library(MASS)
 ```
 
 ## Introduction and Data
@@ -38,19 +42,217 @@ library(Stat2Data)
 
 ### Exploratory Data Analysis
 
+```{r}
+library(readr)
+data_train <- read_csv("data-train.csv")
+
+attach(data_train)
+data_train <- data_train%>% mutate(TFr = case_when(Fr>1~ .99999, Fr<1~Fr))
+data_train<-data_train%>%mutate(TFr=logit(TFr))
+
+ggplot(data_train) +
+  geom_histogram(aes(x = St), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = Re), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = Fr), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_1), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_2), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_3), bins = 15)
+ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_4), bins = 15)
+
+ggpairs(data_train)
+```
+
+Some brief notes:
+
+Observations on predictors:
+St (size) seems to be mostly small particles with some trials with larger particles.
+Re (turbulence) seems to be in three groups: low (90), medium (224), and high (398). Perhaps it could be considered a categorical variable?
+Fr (gravitational acceleration) seems to also be in three groups: low (.052), medium (.3), and high (infinite). Could this also become a categorical variable?
+We have decided to do a logistic transformation on Fr in order to approximate the effects of infinity.
+
+Also, I believe we should centralize the second through fourth moments. The first raw moment is actually helpful because it tells us about the average amount of turbulence. However, when it comes to the shape of the distribution (variance, skewness, and kurtosis) we need to centralize the moments in order to interpret them.
+
+The code for transforming the variables is below:
+
+```{r}
+
+data_train <- data_train %>% mutate(R_moment_1_central = 0)
+data_train <- data_train %>% mutate(R_moment_2_central = R_moment_2 - (R_moment_1)^2)
+data_train <- data_train %>% mutate(R_moment_3_central = R_moment_3 - 3*R_moment_1*R_moment_2 + 2*(R_moment_1)^3)
+data_train <- data_train %>% mutate(R_moment_4_central = R_moment_4 - 4*R_moment_1*R_moment_3 + 6*((R_moment_1)^2)*R_moment_2 - 3*(R_moment_1)^4)
+```
+
+
+
+Correlations:
+Reynolds number is negatively correlated with all moments, which is surprising but I believe it is due to the fact that almost all of the observations of all the moments are mostly around 0 with only some exceptions.
+The 2nd, 3rd, and 4th moments are pretty correlated but this makes sense because they are all various measures of the width and shape of the tails.
+
+Plots:
+St and the first moment seem to have a linear or quadratic relationship. I would not be surprised if it is true that bigger particles cluster more on average.
+St and the second, third, and fourth moments seem to have a linear or quadratic relationship. Perhaps bigger particles behave more unpredictably.
 
 
 ## Methodology
 
 ### Linear 
 
+
 #### Linear Fitting
+
+```{r}
+
+full_linear_E1 <- glm(R_moment_1 ~ St + TFr + Re, data = data_train)
+step_full_linear_E1 <- stepAIC(full_linear_E1, direction = "both", trace = FALSE)
+summary(step_full_linear_E1)
+plot(step_full_linear_E1)
+
+full_linear_E2 <- glm(R_moment_2 ~ St + TFr + Re, data = data_train)
+step_full_linear_E2 <- stepAIC(full_linear_E2, direction = "both", trace = FALSE)
+summary(step_full_linear_E2)
+plot(step_full_linear_E2)
+
+full_linear_E3 <- glm(R_moment_3 ~ St + TFr + Re, data = data_train)
+step_full_linear_E3 <- stepAIC(full_linear_E3, direction = "both", trace = FALSE)
+summary(step_full_linear_E3)
+plot(step_full_linear_E3)
+
+full_linear_E4 <- glm(R_moment_4 ~ St + TFr + Re, data = data_train)
+step_full_linear_E4 <- stepAIC(full_linear_E4, direction = "both", trace = FALSE)
+summary(step_full_linear_E4)
+plot(step_full_linear_E4)
+
+```
+
+
+#### Linear fitting on central moments 2 through 4
+
+```{r}
+
+full_linear_E2_central <- glm(R_moment_2_central ~ St + TFr + Re, data = data_train)
+step_full_linear_E2_central <- stepAIC(full_linear_E2_central, direction = "both", trace = FALSE)
+summary(step_full_linear_E2_central)
+plot(step_full_linear_E2_central)
+
+full_linear_E3_central <- glm(R_moment_3_central ~ St + TFr + Re, data = data_train)
+step_full_linear_E3_central <- stepAIC(full_linear_E3_central, direction = "both", trace = FALSE)
+summary(step_full_linear_E3_central)
+plot(step_full_linear_E3_central)
+
+full_linear_E4_central <- glm(R_moment_4_central ~ St + TFr + Re, data = data_train)
+step_full_linear_E4_central <- stepAIC(full_linear_E4_central, direction = "both", trace = FALSE)
+summary(step_full_linear_E4_central)
+plot(step_full_linear_E4_central)
+```
 
 
 #### Best AiC model with interactions
 
+```{r}
+full_linear_interactions_E1 <- glm(R_moment_1 ~ St*TFr + St*Re + TFr*Re, data = data_train)
+step_full_linear_interactions_E1 <- stepAIC(full_linear_interactions_E1, direction = "both", trace = FALSE)
+summary(step_full_linear_interactions_E1)
+plot(step_full_linear_interactions_E1)
+
+
+full_linear_interactions_E2 <- glm(R_moment_2_central ~ St*TFr + St*Re + TFr*Re, data = data_train)
+step_full_linear_interactions_E2 <- stepAIC(full_linear_interactions_E2, direction = "both", trace = FALSE)
+summary(step_full_linear_interactions_E2)
+plot(step_full_linear_interactions_E2)
+
+full_linear_interactions_E3 <- glm(R_moment_3_central ~ St*TFr + St*Re + TFr*Re, data = data_train)
+step_full_linear_interactions_E3 <- stepAIC(full_linear_interactions_E3, direction = "both", trace = FALSE)
+summary(step_full_linear_interactions_E3)
+plot(step_full_linear_interactions_E3)
+
+full_linear_interactions_E4 <- glm(R_moment_4_central ~ St*TFr + St*Re + TFr*Re, data = data_train)
+step_full_linear_interactions_E4 <- stepAIC(full_linear_interactions_E4, direction = "both", trace = FALSE)
+summary(step_full_linear_interactions_E4)
+plot(step_full_linear_interactions_E4)
+
+```
+
 
 #### Model Evaluation (Linear)
+
+```{r}
+library(boot)
+cve_linear_E1 <- cv.glm(data_train, step_full_linear_E1, K=10)
+cve_linear_E1$delta
+cve_linear_interactions_E1 <- cv.glm(data_train, step_full_linear_interactions_E1, K = 10)
+cve_linear_interactions_E1$delta
+
+
+cve_linear_E2 <- cv.glm(data_train, step_full_linear_E2_central, K=10)
+cve_linear_E2$delta
+cve_linear_interactions_E2 <- cv.glm(data_train, step_full_linear_E2_central, K = 10)
+cve_linear_interactions_E2$delta
+
+cve_linear_E3 <- cv.glm(data_train, step_full_linear_E3_central, K=10)
+cve_linear_E3$delta
+cve_linear_interactions_E3 <- cv.glm(data_train, step_full_linear_interactions_E3, K = 10)
+cve_linear_interactions_E3$delta
+
+cve_linear_E4 <- cv.glm(data_train, step_full_linear_E4_central, K=10)
+cve_linear_E4$delta
+cve_linear_interactions_E4 <- cv.glm(data_train, step_full_linear_interactions_E4, K = 10)
+cve_linear_interactions_E4$delta
+
+```
+It seems that the interactions are increasingly important. They are less important for the first and second moments. In fact, cross validation error increases for the second moment when interactions are added into the model. However, for the third through fourth moments, there is a pretty significant decrease in cross validation error when comparing the strictly linear models versus the ones with interactions.
+
+This I think the linear models worth sharing with our physicist colleagues are the following:
+
+```{r}
+summary(step_full_linear_E1)
+
+summary(step_full_linear_E2_central)
+
+summary(step_full_linear_interactions_E3)
+
+summary(step_full_linear_interactions_E4)
+
+```
+OR (by calling lm version of the functions)
+
+```{r}
+lm_fit_E1 <- lm(R_moment_1 ~ St + Re, data = data_train)
+summary(lm_fit_E1)
+plot(lm_fit_E1)
+cve_linear_E1$delta
+```
+Surprisingly, a very simple linear model with only two out of the three predictors explains about 62% of the variation of the first moment. The Reynolds number coefficient is small and negative, which contradicts physics theory. I believe this is due to the fact that the overwhelming majority of observations had small mean turbulence, so the regression fit a line with negative slope. On average, we just do not often observe turbulence no matter what predictors are used. However, the coefficient on St is slightly larger and positive. I believe this shows that perhaps the most important contributor to increases in the first moment is the size of the particles. In fact, adding interactions or the Fr predictor did not change the R^2 very much, so I believe that St is very important for increasing average turbulence.
+Nonetheless, there is a clear pattern to the residuals plot. First we underestimate, then overestimate, then underestimate again. This is evidence of a potential nonlinear relationship between the variables and the predictors.
+
+```{r}
+lm_fit_E2 <- lm(R_moment_2_central ~ TFr + Re, data = data_train)
+summary(lm_fit_E2)
+cve_linear_E2$delta
+plot(lm_fit_E2)
+```
+The R^2 is quite low at only about 20%. Generally, I believe this linear model is not very helpful. There is another clear pattern in the residuals plot and the linear fit consistently underestimates when the second moment is large. The truth is definitely closer to a nonlinear relationship.
+
+```{r}
+lm_fit_E3 <- lm(R_moment_3_central ~ St + TFr + Re + St:TFr + TFr:Re, data = data_train)
+summary(lm_fit_E3)
+plot(lm_fit_E3)
+cve_linear_interactions_E3$delta
+```
+The R^2 is still not great at only about 32%. However, the interaction terms give important theoretical insights that are more in line with the limited theory that we know. The coefficient on TFr:Re is positive, which means that even though the coefficients on Re and TFr alone are negative, we can infer that at high enough levels of TFr, the effect of Re will actually be positive (since the interaction term means that for a given TFr, the coefficient on Re is (-9805.2 + 953.2 * TFr)). Similarly, the effect of TFr will be positive at high enough levels of Re. Thus, increasing rightward skewness of the probability density functions with Re or TFr seems to occur only for a combination of high values of TFr and Re. Otherwise, the main positive coefficient is St. Again, we see that the size of the particles has a particularly straightforward effect on turbulence. It increases the first moment and the right skewness of the PDF.
+
+```{r}
+lm_fit_E4 <- lm(R_moment_4_central ~ St * TFr + St * Re + TFr * Re, data = data_train)
+summary(lm_fit_E4)
+plot(lm_fit_E4)
+```
+
+Our analysis of the best linear model for the fourth central moment is quite similar to that of the third central moment. St is the biggest positive driver of kurtosis in the PDF. TFr and Re individually are negative, but they have a positive interaction coefficient.
 
 
 ### Complex Model 
@@ -75,5 +277,3 @@ library(Stat2Data)
 
 
 ## References
-
-Hello
