@@ -27,6 +27,11 @@ library(GGally)
 library(leaps)
 library(arm)
 library(MASS)
+library(stats)
+library(car)
+library(boot)
+library(arm)
+library(gam)
 ```
 
 ## Introduction and Data
@@ -257,20 +262,141 @@ Our analysis of the best linear model for the fourth central moment is quite sim
 
 ### Complex Model 
 
+Lets First start start by evaluating a gam model to see if there is a complex relationship between our response variables and predictor variables. For this section of the project, I will be only employing the simpler lm function to keep all the models in the same format.
+```{r,par(mfrow = c(2, 2))}
+gam1<-lm(R_moment_1~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
+gam2<-lm(R_moment_2~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
+gam3<-lm(R_moment_3~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
+gam4<-lm(R_moment_4~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
+print(summary(gam1))
+print(summary(gam2))
+print(summary(gam3))
+print(summary(gam4))
+```
+As we can see, a Gam Model performs better with all the moments than linear regression. Nevertheless, as we can see the model only performs adequately with the first moment with an adjusted r square of 0.9244 and an RSS of 0.01536 compared to an average of 0.4 for the other models. This likely is due to the lack of interaction factors in our model, which appear to affect the second, third and fourth moment more than the first. Thus, we might need to add some interaction values to our polynomial model.
+
+
+Note: 2 degrees were chosen due to the number of unique values of in our data. Only 3 degrees were chosen for St since it has multiple unique values.
+
+##### Plots
+
+Since the first GAM performed particulary well, it might be worthwhile to explore the relationship between our response varible and predicator varibles using plots.
+```{r}
+par(mfrow=c(1,3))
+gam_one<- gam(R_moment_1~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
+plot(gam_one, se = TRUE, col = "blue")
+```
+As we can see from the plots, the first moment appears to experience a steep drop for both TFr and Re from the first to the second observation. The decrease becomes much less significant from the second observation to the third observation for both Tfr and Re. The relationship between St and the first moment appear to be roughly linear and increasing. 
+
 #### Best Degree Model
 
-#### Model Evaluation?
+We can utilize a sequential stepwise selection method with a full model. Our full model would utilize the max number of interactions with a polynomial degree of 2 for Tfr and Re (Max number of degrees based on unique values). We will use one for St since throughout our linear models and GAM models, it appears that the relationship between the St and the moments is approximetly linear.
+
+```{r}
+train.control <- trainControl(method = "LOOCV")
+step.model.one <- train(R_moment_1~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+                    method = "leapSeq", 
+                    tuneGrid = data.frame(nvmax =1:13),
+                    trControl = train.control
+                    )
+step.model.one$results
+coef(step.model.one$finalModel, 5)
+data1<-data.frame(step.model.one$results$nvmax, step.model.one$results$RMSE)
+ggplot(data1,aes(x = step.model.one.results.nvmax, y =(step.model.one.results.RMSE)^2))+
+         geom_line()+
+         geom_point()+
+  scale_x_continuous(breaks = 1:13, minor_breaks = NULL) +
+   labs(title = "Training MSE based on Number of Variables ",
+        x="Best Model with x Variables", y="MSE")
+```
+As we can see from the plot, there appears to be in MSE until about the 5 degrees best model. Then the MSE increases again until about the model with 9 variables, where it decreases again. Since, for the first moment, we are focusing more on inference and the error appears to be neigable between the fifth model and later models,we will choose the fifth model as our best model.
+\par
+Next, we are going to repeat the same process for all the other moments with a focus on prediction instead of inference. 
+```{r}
+step.model.two <- train(R_moment_2~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+                    method = "leapSeq", 
+                    tuneGrid = data.frame(nvmax =1:13),
+                    trControl = train.control
+                    )
+step.model.two$results
+```
+```{r}
+data2<-data.frame(step.model.two$results$nvmax, step.model.two$results$RMSE)
+ggplot(data2,aes(x = step.model.two.results.nvmax, y =(step.model.two.results.RMSE)^2))+
+         geom_line()+
+         geom_point()+
+  scale_x_continuous(breaks = 1:13, minor_breaks = NULL) +
+   labs(title = "Training MSE based on Number of Variables ",
+        x="Best Model with x Variables", y="MSE")
+```
+As we can see from the plot, the model does best is the one with 12 variables. However, this model is most likely not very understandable since it does include a variety of interactions including the three way interaction. So the model with 9 variables might be better for some inference. Nevertheless, it does appear that the higher the moment the harder it is to predict.
+
+
+```{r}
+step.model.three <- train(R_moment_3~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+                    method = "leapSeq", 
+                    tuneGrid = data.frame(nvmax =1:13),
+                    trControl = train.control
+                    )
+step.model.three$results
+data2<-data.frame(step.model.three$results$nvmax, step.model.three$results$RMSE)
+ggplot(data2,aes(x = step.model.three.results.nvmax, y =(step.model.three.results.RMSE)^2))+
+         geom_line()+
+         geom_point()+
+  scale_x_continuous(breaks = 1:13, minor_breaks = NULL) +
+   labs(title = "Training MSE based on Number of Variables ",
+        x="Best Model with x Variables", y="MSE")
 
 
 
+```
+As we can see, the complex model (the almost full model with 12 variables) appears to be doing significantly best. However, since the errors are so big, it might be worth exploring the difference in error between including 12 variables and 8 variables in our final model.
+```{r}
+step.model.four<- train(R_moment_4~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+                    method = "leapSeq", 
+                    tuneGrid = data.frame(nvmax =1:13),
+                    trControl = train.control
+                    )
+step.model.four$results
+data2<-data.frame(step.model.four$results$nvmax, step.model.four$results$RMSE)
+ggplot(data2,aes(x = step.model.four.results.nvmax, y =(step.model.four.results.RMSE)^2))+
+         geom_line()+
+         geom_point()+
+  scale_x_continuous(breaks = 1:13, minor_breaks = NULL) +
+   labs(title = "Training MSE based on Number of Variables ",
+        x="Best Model with x Variables", y="MSE")
 
+```
+Interestingly, for the fourth moment, the full model appears to do the best. However, the model with 8 variables might of interest to explore since it might be better for inference while not scaificing a ton of accuracy.
+\par
 
 
 
 
 ## Results (Final Models)
+```{r}
+model_1<-lm(R_moment_1~I(Re^2)+St+Re+I(Re^2)*St+St:Re,data=data_train)
+summary(model_1)
+```
+As we can see a model with 5 variables is enough to predict the first raw moment accurately. Interestingly enough, similar to the linear models TFr doesn't appear to have a significant relationship between it and the first raw moment.
 
+```{r}
+model_2<-lm(R_moment_2~Re*TFr*St+I(TFr^2):I(Re^2)+I(TFr^2):St +I(TFr^2)+I(Re^2)-Re:TFr:St,data=data_train)
+summary(model_2)
+```
+The final model for the second raw moment is a model with 10 variables that has up to two interaction levels.
 
+```{r}
+model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+summary(model_3)
+```
+Our Final model for Moment 4 will be the full model with 13 variables (ST is in the model due to the hierarchy principle) . This model has all interaction variables up to 3, since they appear to be significant (P<0.05)
+
+```{r}
+model_4<-lm(R_moment_4~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+summary(model_4)
+```
+Our Final model for Moment 4 will be the full model with 13 variables (ST is in the model due to the hierarchy principle) . This model has all interaction variables up to 3, since they appear to be significant (P<0.05). 
 
 ## Discussion & Conclusion 
 
