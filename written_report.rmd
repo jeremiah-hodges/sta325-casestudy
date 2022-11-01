@@ -1,0 +1,170 @@
+---
+title: "Case Study"
+author: "Abdel Shehata"
+date: "2022-10-26"
+output:
+  pdf_document:
+    fig_height: 4
+    fig_width: 6
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(message = FALSE, 
+                      warning = FALSE, 
+                      echo = FALSE,
+                      fig.width = 6, #width of figure
+                      fig.asp = .618, #set figure height based on aspect ratio
+                      out.width = "75%", #width relative to text
+                      fig.align = "center" #alignment
+                      )
+```
+
+```{r, echo=FALSE, message=FALSE}
+#| label: load-pkg-data
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+library(knitr)
+library(recipes)
+library(caret)
+library(InformationValue)
+library(ISLR)
+library(MASS)
+library(nnet)
+library(Stat2Data)
+library(GGally)
+library(leaps)
+library(arm)
+library(MASS)
+library(stats)
+library(car)
+library(boot)
+library(arm)
+library(gam)
+library(readr)
+library(gridExtra)
+library(grid)
+library(ggplot2)
+library(lattice)
+```
+
+## Introduction and Data
+
+### Introduction
+
+
+
+### Data Introduction
+
+
+
+
+### Exploratory Data Analysis
+```{r}
+data_train <- read_csv("data-train.csv")
+
+attach(data_train)
+data_train <- data_train%>% mutate(TFr = case_when(Fr>1~ .99999, Fr<1~Fr))
+data_train<-data_train%>%mutate(TFr=logit(TFr))
+
+ggplot(data_train) +
+  geom_histogram(aes(x = St), bins = 15)
+```
+```{r}
+p1<-ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_1), bins = 10)
+p2<-ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_2), bins = 10)
+p3<-ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_3), bins = 10)
+p4<-ggplot(data_train) +
+  geom_histogram(aes(x = R_moment_4), bins = 10)
+grid.arrange(p1, p2,p3,p4,nrow = 2)
+```
+```{r}
+
+full_linear_E1 <- lm(R_moment_4 ~ Re+TFr, data = data_train)
+summary(full_linear_E1)
+```
+Here are the linear models we obtained for the moments (without interactions):
+\Large
+<center>
+$$ \hat{R_1}=0.0102+0.01353*St-0.0003798*Re$$
+$$ \hat{R_2}=299.6593-0.8473*Re-10.2317TFr$$
+$$ \hat{R_3}=2442265-6905*Re--83580TFr$$
+$$ \hat{R_4}=2.008*10^{10}-5.677*10^{7}*Re-6.872*10^{8}TFr$$
+<center>
+\Large
+```{r fig.height=5, fig.width=7}
+full_linear_E1 <- lm(R_moment_1 ~ Re+St, data = data_train)
+full_linear_E2 <- lm(R_moment_2~ Re+TFr, data = data_train)
+full_linear_E3 <- lm(R_moment_3~ Re+TFr, data = data_train)
+full_linear_E4 <- lm(R_moment_4 ~ Re+TFr, data = data_train)
+par(mfrow=c(2,2))
+p1<-plot(full_linear_E1,which=1)
+p2<-plot(full_linear_E2,which=1)
+p3<-plot(full_linear_E3,which=1)
+p4<-plot(full_linear_E4,which=1)
+```
+```{r}
+par(mfrow=c(2,2))
+full_linear_interactions_E1 <- lm(R_moment_1 ~ St*TFr*Re, data = data_train)
+step_full_linear_interactions_E1 <- stepAIC(full_linear_interactions_E1, direction = "both", trace = FALSE)
+plot(step_full_linear_interactions_E1,which= 1:2)
+```
+```{r }
+par(mfrow=c(2,2))
+full_linear_interactions_E2 <- lm(R_moment_2 ~ St*TFr*Re, data = data_train)
+step_full_linear_interactions_E2 <- stepAIC(full_linear_interactions_E2, direction = "both", trace = FALSE)
+plot(step_full_linear_interactions_E2,which= 1)
+full_linear_interactions_E3 <- lm(R_moment_3~ St*TFr*Re, data = data_train)
+step_full_linear_interactions_E3 <- stepAIC(full_linear_interactions_E3, direction = "both", trace = FALSE)
+plot(step_full_linear_interactions_E3,which= 1)
+
+full_linear_interactions_E4 <- lm(R_moment_4~ St*TFr*Re, data = data_train)
+step_full_linear_interactions_E4 <- stepAIC(full_linear_interactions_E4, direction = "both", trace= FALSE)
+
+summary(step_full_linear_interactions_E4)
+```
+<center>
+$$ \hat{R_1}=9.822*10^{-2}+3.398*10^{-2}*St-2.534*10^{-3}*TFr-3.176*10^{-4}*Re$$  $$-1.002*10^{-4}*St*Re+9.098*10^{-6}*TFr*Re$$
+\par
+
+$$ \hat{R_2}=327.50288 +46.54518*St-36.88062 *TFr-1.19146 *Re$$  $$-0.11802 *TFr*Re$$
+\par
+$$ \hat{R_3}=2525699.0 +556624.1*St-252310.1*TFr-9805.7*Re$$  $$-54692.6 *St*TFr+953.2*TFr*Re$$
+$$ \hat{R_4}= 1.528*10^{10}+1.050*10^{10}*St-1.915*10^{10}*TFr-5.598*10^{7}*Re$$  $$-5.176*10^{8}*St*TFr-2.662*10^{7}*St*Re+7.7304*10^{6}*TFr*Re$$
+
+### Model Evalutation 
+```{r}
+train.control <- trainControl(method = "LOOCV")
+model1 <- train(R_moment_4 ~ St + TFr + Re + St:TFr + St:Re + TFr:Re,data = data_train,
+                        method="lm",
+                    trControl = train.control
+                    )
+```
+
+
+
+
+|      Linear RMSE    | No Interactions | Interactions
+|-----------|-------|----------|-------|
+| **R_1**   |  0.0349    |  0.0340   |      
+| **R_2**   |   237.411   | 222.3977 |   
+| **R_3** |    1991432   |     1870992   |    
+| **R_4** |    16757102688   |   15946689806  | 
+
+|      Linear R-Squared    | No Interactions | Interactions
+|-----------|-------|----------|-------|
+| **R_1**   |  0.6054832  |  0.6282726   |      
+| **R_2**   | 0.1716913    |0.2754936|   
+| **R_3** |    0.161867   |     0.2650636  |    
+| **R_4** |  0.1539926    | 0.2466392    | 
+
+
+
