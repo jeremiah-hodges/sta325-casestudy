@@ -32,6 +32,7 @@ library(car)
 library(boot)
 library(arm)
 library(gam)
+library(sjPlot)
 ```
 
 ## Introduction and Data
@@ -280,7 +281,7 @@ Note: 2 degrees were chosen due to the number of unique values of in our data. O
 
 ##### Plots
 
-Since the first GAM performed particulary well, it might be worthwhile to explore the relationship between our response varible and predicator varibles using plots.
+Since the first GAM performed particulary well, it might be worthwhile to explore the relationship between our response varible and predictor varibles using plots.
 ```{r}
 par(mfrow=c(1,3))
 gam_one<- gam(R_moment_1~ns(TFr,2)+ns(Re,2)+ns(St,3),data=data_train)
@@ -290,7 +291,7 @@ As we can see from the plots, the first moment appears to experience a steep dro
 
 #### Best Degree Model
 
-We can utilize a sequential stepwise selection method with a full model. Our full model would utilize the max number of interactions with a polynomial degree of 2 for Tfr and Re (Max number of degrees based on unique values). We will use one for St since throughout our linear models and GAM models, it appears that the relationship between the St and the moments is approximetly linear.
+We can utilize a sequential stepwise selection method with a full model. Our full model would utilize the max number of interactions with a polynomial degree of 2 for TFr and Re (Max number of degrees based on unique values). We will use one for St since throughout our linear models and GAM models, it appears that the relationship between the St and the moments is approximately linear.
 
 ```{r}
 train.control <- trainControl(method = "LOOCV")
@@ -309,7 +310,7 @@ ggplot(data1,aes(x = step.model.one.results.nvmax, y =(step.model.one.results.RM
    labs(title = "Training MSE based on Number of Variables ",
         x="Best Model with x Variables", y="MSE")
 ```
-As we can see from the plot, there appears to be in MSE until about the 5 degrees best model. Then the MSE increases again until about the model with 9 variables, where it decreases again. Since, for the first moment, we are focusing more on inference and the error appears to be neigable between the fifth model and later models,we will choose the fifth model as our best model.
+As we can see from the plot, there appears to be a decrease in MSE until about the 5 degrees best model. Then the MSE increases again until about the model with 9 variables, where it decreases again. Since, for the first moment, we are focusing more on inference and the error appears to be negligible between the fifth model and later models, we will choose the fifth model as our best model.
 \par
 Next, we are going to repeat the same process for all the other moments with a focus on prediction instead of inference. 
 ```{r}
@@ -329,7 +330,9 @@ ggplot(data2,aes(x = step.model.two.results.nvmax, y =(step.model.two.results.RM
    labs(title = "Training MSE based on Number of Variables ",
         x="Best Model with x Variables", y="MSE")
 ```
-As we can see from the plot, the model does best is the one with 12 variables. However, this model is most likely not very understandable since it does include a variety of interactions including the three way interaction. So the model with 9 variables might be better for some inference. Nevertheless, it does appear that the higher the moment the harder it is to predict.
+As we can see from the plot, the model does best is the one with 12 variables. However, this model is most likely not very understandable since it does include a variety of interactions including the three way interaction. So the model with 9 variables might be better for some inference. [Francis: I would prefer to go with 6 because even that is a lot of variables already.] Nevertheless, it does appear that the higher the moment the harder it is to predict.
+
+
 
 
 ```{r}
@@ -350,7 +353,7 @@ ggplot(data2,aes(x = step.model.three.results.nvmax, y =(step.model.three.result
 
 
 ```
-As we can see, the complex model (the almost full model with 12 variables) appears to be doing significantly best. However, since the errors are so big, it might be worth exploring the difference in error between including 12 variables and 8 variables in our final model.
+As we can see, the complex model (the almost full model with 12 variables) appears to be doing significantly best. However, since the errors are so big, it might be worth exploring the difference in error between including 12 variables and 8 variables in our final model. [Francis: 6 looks fine again]
 ```{r}
 step.model.four<- train(R_moment_4~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
                     method = "leapSeq", 
@@ -367,7 +370,7 @@ ggplot(data2,aes(x = step.model.four.results.nvmax, y =(step.model.four.results.
         x="Best Model with x Variables", y="MSE")
 
 ```
-Interestingly, for the fourth moment, the full model appears to do the best. However, the model with 8 variables might of interest to explore since it might be better for inference while not scaificing a ton of accuracy.
+Interestingly, for the fourth moment, the full model appears to do the best. However, the model with 8 variables might of interest to explore since it might be better for inference while not sacrificing a ton of accuracy. [Francis: That's a good idea. Although for kurtosis (the fourth moment) we really aren't learning much about the distribution to begin with so there is no harm in aiming for good prediction and having a flexible model with 6 or 10 variables. I think it might be worth trying 4 variables for the other models 2 & 3 instead, so we can do more single variable plots.]
 \par
 
 
@@ -381,15 +384,59 @@ summary(model_1)
 As we can see a model with 5 variables is enough to predict the first raw moment accurately. Interestingly enough, similar to the linear models TFr doesn't appear to have a significant relationship between it and the first raw moment.
 
 ```{r}
+plot_model(model_1, type = "pred", terms = c("St", "Re[90,224,398]"))
+plot_model(model_1, type = "pred", terms = c("Re","St[.05,.7,1.4]"))
+
+```
+
+```{r}
 model_2<-lm(R_moment_2~Re*TFr*St+I(TFr^2):I(Re^2)+I(TFr^2):St +I(TFr^2)+I(Re^2)-Re:TFr:St,data=data_train)
 summary(model_2)
 ```
 The final model for the second raw moment is a model with 10 variables that has up to two interaction levels.
 
 ```{r}
+plot_model(model_2, type = "pred", terms = c("TFr", "St[.05,.7,1.4]","Re[90,224,398]")) ##checking 500 is interesting
+plot_model(model_2, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+plot_model(model_2, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+```
+
+
+```{r}
+coef(step.model.two$finalModel, 9)
+model_2_alt <- lm(R_moment_2~I(TFr^2)*I(Re^2) + I(TFr^2):St + St:Re + St:TFr + Re*TFr, data=data_train)
+summary(model_2_alt)
+plot_model(model_2_alt, type = "pred", terms = c("TFr", "St[.05,.7,1.4]","Re[90,224,398]"))
+plot_model(model_2_alt, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+plot_model(model_2_alt, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+
+
+```
+
+
+```{r}
 model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
 summary(model_3)
 ```
+
+```{r}
+plot_model(model_3, type = "pred", terms = c("TFr", "St[.05,.7,1.4]","Re[90,224,398]"))
+plot_model(model_3, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+plot_model(model_3, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+```
+
+
+```{r}
+coef(step.model.three$finalModel, 10)
+model_3_alt <- lm(R_moment_3~I(TFr^2)+I(Re^2)+Re+TFr+I(TFr^2):I(Re^2)+I(TFr^2):St+St:Re+St:TFr+Re:TFr+St:Re:TFr, data=data_train)
+summary(model_3_alt)
+plot_model(model_3_alt, type = "pred", terms = c("TFr", "St[.05,.7,1.4]","Re[90,224,398]"))
+plot_model(model_3_alt, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+plot_model(model_3_alt, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+
+```
+
+
 Our Final model for Moment 4 will be the full model with 13 variables (ST is in the model due to the hierarchy principle) . This model has all interaction variables up to 3, since they appear to be significant (P<0.05)
 
 ```{r}
@@ -398,8 +445,56 @@ summary(model_4)
 ```
 Our Final model for Moment 4 will be the full model with 13 variables (ST is in the model due to the hierarchy principle) . This model has all interaction variables up to 3, since they appear to be significant (P<0.05). 
 
+```{r}
+plot_model(model_4, type = "pred", terms = c("TFr", "St[.05,.7,1.4]","Re[90,224,398]"))
+plot_model(model_4, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+plot_model(model_4, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+```
+
+
 ## Discussion & Conclusion 
 
 
 
 ## References
+https://www.britannica.com/science/Reynolds-number
+
+## Smaller Models
+
+```{r}
+coef(step.model.two$finalModel, 6)
+```
+```{r}
+model_2_small <- lm(R_moment_2~I(TFr^2)*I(Re^2)+Re*TFr,data=data_train)
+summary(model_2_small)
+```
+```{r}
+plot_model(model_2_small, type = "pred", terms = c("TFr", "Re[90,224,398]"))
+```
+
+
+
+```{r}
+coef(step.model.three$finalModel, 6)
+```
+
+```{r}
+model_3_small <- lm(R_moment_3~I(TFr^2)*I(Re^2)+Re*TFr,data=data_train)
+summary(model_3_small)
+```
+```{r}
+plot_model(model_3_small, type = "pred", terms = c("TFr", "Re[90,224,398]"))
+```
+
+```{r}
+coef(step.model.four$finalModel, 6)
+```
+```{r}
+model_4_small <- lm(R_moment_4~I(TFr^2)*I(Re^2)+Re*TFr,data=data_train)
+summary(model_4_small)
+```
+```{r}
+plot_model(model_4_small, type = "pred", terms = c("TFr", "Re[90,224,398]"))
+```
+```
+
