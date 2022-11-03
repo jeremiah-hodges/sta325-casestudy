@@ -205,11 +205,13 @@ We can utilize a sequential stepwise selection method with a full model. Our ful
 
 ```{r}
 train.control <- trainControl(method = "LOOCV")
-step.model.one <- train(R_moment_1~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+step.model.one <- train(R_moment_1~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr, data = data_train,
                     method = "leapSeq", 
                     tuneGrid = data.frame(nvmax =1:13),
                     trControl = train.control
                     )
+
+
 data1<-data.frame(step.model.one$results$nvmax, step.model.one$results$RMSE)
 ggplot(data1,aes(x = step.model.one.results.nvmax, y =(step.model.one.results.RMSE)^2))+
          geom_line()+
@@ -220,9 +222,9 @@ ggplot(data1,aes(x = step.model.one.results.nvmax, y =(step.model.one.results.RM
 ```
 As we can see from the plot, there appears to be in MSE until about the 5 degrees best model. Then the MSE increases again until about the model with 9 variables, where it decreases again. Since, for the first moment, we are focusing more on inference and the error appears to be neigable between the fifth model and later models,we will choose the fifth model as our best model.
 ```{r}
-step.model.two <- train(R_moment_2~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+step.model.two <- train(R_moment_2~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr, data = data_train,
                     method = "leapSeq", 
-                    tuneGrid = data.frame(nvmax =1:13),
+                    tuneGrid = data.frame(nvmax =1:15),
                     trControl = train.control
 )
 data2<-data.frame(step.model.two$results$nvmax, step.model.two$results$RMSE)
@@ -239,7 +241,7 @@ As we can see from the plot, the model does best is the one with 12 variables. H
 
 
 ```{r}
-step.model.three <- train(R_moment_3~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+step.model.three <- train(R_moment_3~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr, data = data_train,
                     method = "leapSeq", 
                     tuneGrid = data.frame(nvmax =1:13),
                     trControl = train.control
@@ -257,11 +259,13 @@ ggplot(data2,aes(x = step.model.three.results.nvmax, y =(step.model.three.result
 ```
 As we can see, the complex model (the almost full model with 12 variables) appears to be doing significantly best. However, since the errors are so big, it might be worth exploring the difference in error between including 12 variables and 8 variables in our final model.
 ```{r}
-step.model.four<- train(R_moment_4~I(TFr^2)*I(Re^2)*St+St*Re*TFr, data = data_train,
+step.model.four<- train(R_moment_4~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr, data = data_train,
                     method = "leapSeq", 
                     tuneGrid = data.frame(nvmax =1:13),
                     trControl = train.control
                     )
+
+
 data2<-data.frame(step.model.four$results$nvmax, step.model.four$results$RMSE)
 ggplot(data2,aes(x = step.model.four.results.nvmax, y =(step.model.four.results.RMSE)^2))+
          geom_line()+
@@ -279,26 +283,26 @@ Interestingly, for the fourth moment, the full model appears to do the best. How
 
 ## Results (Final Models)
 ```{r}
-model_1<-lm(R_moment_1~I(Re^2)+St+Re+I(Re^2)*St+St:Re,data=data_train)
+model_1<-lm(R_moment_1~I(Re^2)+St+Re+TFr+St:Re,data=data_train)
 summary(model_1)
 ```
 As we can see a model with 5 variables is enough to predict the first raw moment accurately. Interestingly enough, similar to the linear models TFr doesn't appear to have a significant relationship between it and the first raw moment.
 
 ```{r}
-model_2<-lm(R_moment_2~Re*TFr*St+I(TFr^2):I(Re^2)+I(TFr^2):St +I(TFr^2)+I(Re^2)-Re:TFr:St,data=data_train)
+model_2<-lm(R_moment_2~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr,data=data_train)
 summary(model_2)
 ```
 The final model for the second raw moment is a model with 10 variables that has up to two interaction levels.
 
 ```{r}
-model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr,data=data_train)
 summary(model_3)
 ```
 Our Final model for Moment 3 will be the full model with 13 variables (ST is in the model due to the hierarchy principle) . This model has all interaction variables up to 3, since they appear to be significant (P<0.05)
 
 \footnotesize
 ```{r, out.width="50%"}
-model_4<-lm(R_moment_4~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+model_4<-lm(R_moment_4~I(TFr^2)*I(Re^2)*I(St^2)+St*Re*TFr,data=data_train)
 summary(model_4)
 ```
 \normalsize
