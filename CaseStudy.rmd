@@ -463,7 +463,8 @@ The relationship between the predictors and kurtosis essentially seems identical
 
 ## Discussion & Conclusion 
 
-
+Conclusion:
+In conclusion, we have learned that St and the first moment have a mostly positive and linear relationship, although predictive accuracy can increase if we use a more complex model that includes interactions. Through the model with interactions, we saw that extremely high values of Re will increase average clustering. The other moments are best fitted with models that involve complex interactions and exponential terms due to their inherent nonlinearity. In general, high levels of Fr and Re decrease variance, skewness, and kurtosis. These parameters seem to make the results of the simulation more regular and consistent. On the other hand, St pushes more positive skewness and kurtosis. I believe that this probably has to do with the inherently chaotic and unpredictable nature of collisions between particles. Lastly, with regards to variance, we saw Re = 224 exhibits some kind of thresholding behavior because its effect on variance switches at that point. In addition to this mystery, the specific relationship between Re and Fr is also worth further consideration. Intuitively, as Fr increases I would expect clustering behavior to become more regular because high flow probably cuts short any particularly unusual behavior of particles. However, Re when combined with Fr also seems to concentrate the probability of clustering around the mean. Theoretically, I would expect Re to both increase mean clustering and lead to less predictable behavior. Perhaps our results mean that high levels of Re in fact leads to more clustering, albeit in very consistent ways.
 
 ## References
 https://www.britannica.com/science/Reynolds-number
