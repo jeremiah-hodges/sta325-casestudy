@@ -1,0 +1,70 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r, echo=FALSE, message=FALSE}
+#| label: load-pkg-data
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+library(knitr)
+library(recipes)
+library(caret)
+library(InformationValue)
+library(ISLR)
+library(MASS)
+library(nnet)
+library(Stat2Data)
+library(GGally)
+library(leaps)
+library(arm)
+library(MASS)
+library(stats)
+library(car)
+library(boot)
+library(arm)
+library(gam)
+library(readr)
+library(gridExtra)
+library(grid)
+library(ggplot2)
+library(lattice)
+library(sjPlot)
+```
+
+```{r}
+library(readr)
+data_train <- read_csv("data-train.csv")
+data_train <- data_train%>% mutate(TFr = case_when(Fr>1~ .99999, Fr<1~Fr))
+data_train <- data_train%>%mutate(TFr=logit(TFr))
+
+data_test_submit <- read_csv("data-test.csv")
+data_test_submit <- data_test_submit%>% mutate(TFr = case_when(Fr>1~ .99999, Fr<1~Fr))
+data_test_submit<-data_test_submit%>%mutate(TFr=logit(TFr))
+```
+
+```{r}
+model_1<-lm(R_moment_1~I(Re^2)+St+Re+I(Re^2)*St+St:Re,data=data_train)
+model_2<-lm(R_moment_2~Re*TFr*St+I(TFr^2):I(Re^2)+I(TFr^2):St +I(TFr^2)+I(Re^2)-Re:TFr:St,data=data_train)
+model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+model_4<-lm(R_moment_4~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+
+pred_1 <- predict(model_1, newdata = data_test_submit)
+pred_2 <- predict(model_2, newdata = data_test_submit)
+pred_3 <- predict(model_3, newdata = data_test_submit)
+pred_4 <- predict(model_4, newdata = data_test_submit)
+
+data_test_submit <- mutate(data_test_submit, pred_R_moment_1 = pred_1)
+data_test_submit <- mutate(data_test_submit, pred_R_moment_2 = pred_2)
+data_test_submit <- mutate(data_test_submit, pred_R_moment_3 = pred_3)
+data_test_submit <- mutate(data_test_submit, pred_R_moment_4 = pred_4)
+
+write.csv(data_test_submit,"data_test_submit.csv")
+```
+
