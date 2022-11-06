@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.2)  3 NOV 2022 00:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.9.2)  6 NOV 2022 16:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -554,13 +554,19 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 ) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <10> on input line 95.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <7> on input line 95.
+LaTeX Font Info:    External font `lmex10' loaded for size
+(Font)              <5> on input line 95.
 <written_report_files/figure-latex/unnamed-chunk-2-1.pdf, id=4, 433.62pt x 266.
 9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-2-1.pdf Graphic file (typ
 e pdf)
 <use written_report_files/figure-latex/unnamed-chunk-2-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-2-1.pd
-f  used on input line 97.
+f  used on input line 116.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
 <written_report_files/figure-latex/unnamed-chunk-3-1.pdf, id=5, 433.62pt x 266.
 9975pt>
@@ -568,130 +574,125 @@ File: written_report_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (typ
 e pdf)
 <use written_report_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-3-1.pd
-f  used on input line 99.
+f  used on input line 118.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
+[1
+
+{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./writt
+en_report_files/figure-latex/unnamed-chunk-2-1.pdf>]
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 104.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 104.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 104.
-<written_report_files/figure-latex/unnamed-chunk-5-1.pdf, id=6, 505.89pt x 312.
-16624pt>
+(Font)              <14.4> on input line 123.
+<written_report_files/figure-latex/unnamed-chunk-5-1.pdf, id=33, 505.89pt x 312
+.16624pt>
 File: written_report_files/figure-latex/unnamed-chunk-5-1.pdf Graphic file (typ
 e pdf)
 <use written_report_files/figure-latex/unnamed-chunk-5-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-5-1.pd
-f  used on input line 111.
+f  used on input line 130.
 (pdftex.def)             Requested size: 234.88132pt x 144.93669pt.
-[1
-
-{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./writt
-en_report_files/figure-latex/unnamed-chunk-2-1.pdf> <./written_report_files/fig
-ure-latex/unnamed-chunk-3-1.pdf>]
-<written_report_files/figure-latex/unnamed-chunk-6-1.pdf, id=39, 433.62pt x 266
+<written_report_files/figure-latex/unnamed-chunk-6-1.pdf, id=34, 433.62pt x 266
 .9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-6-1.pdf Graphic file (typ
 e pdf)
 <use written_report_files/figure-latex/unnamed-chunk-6-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-6-1.pd
-f  used on input line 113.
+f  used on input line 132.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-<written_report_files/figure-latex/unnamed-chunk-7-1.pdf, id=40, 433.62pt x 266
+<written_report_files/figure-latex/unnamed-chunk-7-1.pdf, id=35, 433.62pt x 266
 .9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-7-1.pdf Graphic file (typ
 e pdf)
 <use written_report_files/figure-latex/unnamed-chunk-7-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-7-1.pd
-f  used on input line 115.
+f  used on input line 134.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 117.
-[2 <./written_report_files/figure-latex/unnamed-chunk-5-1.pdf> <./written_repor
-t_files/figure-latex/unnamed-chunk-6-1.pdf> <./written_report_files/figure-late
-x/unnamed-chunk-7-1.pdf>]
-<written_report_files/figure-latex/unnamed-chunk-10-1.pdf, id=64, 433.62pt x 26
+[2 <./written_report_files/figure-latex/unnamed-chunk-3-1.pdf> <./written_repor
+t_files/figure-latex/unnamed-chunk-5-1.pdf> <./written_report_files/figure-late
+x/unnamed-chunk-6-1.pdf>] [3 <./written_report_files/figure-latex/unnamed-chunk
+-7-1.pdf>]
+<written_report_files/figure-latex/unnamed-chunk-10-1.pdf, id=74, 433.62pt x 26
 6.9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-10-1.pdf Graphic file (ty
 pe pdf)
 <use written_report_files/figure-latex/unnamed-chunk-10-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-10-1.p
-df  used on input line 199.
+df  used on input line 218.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-[3 <./written_report_files/figure-latex/unnamed-chunk-10-1.pdf>]
-<written_report_files/figure-latex/unnamed-chunk-11-1.pdf, id=82, 433.62pt x 26
+<written_report_files/figure-latex/unnamed-chunk-11-1.pdf, id=75, 433.62pt x 26
 6.9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-11-1.pdf Graphic file (ty
 pe pdf)
 <use written_report_files/figure-latex/unnamed-chunk-11-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-11-1.p
-df  used on input line 217.
+df  used on input line 236.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-<written_report_files/figure-latex/unnamed-chunk-12-1.pdf, id=83, 433.62pt x 26
+[4 <./written_report_files/figure-latex/unnamed-chunk-10-1.pdf> <./written_repo
+rt_files/figure-latex/unnamed-chunk-11-1.pdf>]
+<written_report_files/figure-latex/unnamed-chunk-12-1.pdf, id=95, 433.62pt x 26
 6.9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-12-1.pdf Graphic file (ty
 pe pdf)
 <use written_report_files/figure-latex/unnamed-chunk-12-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-12-1.p
-df  used on input line 226.
+df  used on input line 245.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-<written_report_files/figure-latex/unnamed-chunk-13-1.pdf, id=84, 433.62pt x 26
+<written_report_files/figure-latex/unnamed-chunk-13-1.pdf, id=96, 433.62pt x 26
 6.9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-13-1.pdf Graphic file (ty
 pe pdf)
 <use written_report_files/figure-latex/unnamed-chunk-13-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-13-1.p
-df  used on input line 235.
+df  used on input line 254.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
-[4 <./written_report_files/figure-latex/unnamed-chunk-11-1.pdf> <./written_repo
-rt_files/figure-latex/unnamed-chunk-12-1.pdf>]
-<written_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=101, 433.62pt x 2
-66.9975pt>
+<written_report_files/figure-latex/unnamed-chunk-14-1.pdf, id=97, 433.62pt x 26
+6.9975pt>
 File: written_report_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (ty
 pe pdf)
 <use written_report_files/figure-latex/unnamed-chunk-14-1.pdf>
 Package pdftex.def Info: written_report_files/figure-latex/unnamed-chunk-14-1.p
-df  used on input line 242.
+df  used on input line 261.
 (pdftex.def)             Requested size: 234.87912pt x 144.62463pt.
 LaTeX Font Info:    Trying to load font information for T1+lmtt on input line 2
-54.
+73.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/t1lmtt.fd
 File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
+) [5 <./written_report_files/figure-latex/unnamed-chunk-12-1.pdf> <./written_re
+port_files/figure-latex/unnamed-chunk-13-1.pdf> <./written_report_files/figure-
+latex/unnamed-chunk-14-1.pdf>]
 LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 
-277.
+296.
 (/usr/local/texlive/2022/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-) [5 <./written_report_files/figure-latex/unnamed-chunk-13-1.pdf> <./written_re
-port_files/figure-latex/unnamed-chunk-14-1.pdf>] [6] [7] [8] (./written_report.
-aux) ) 
+) [6] [7] [8] (./written_report.aux) ) 
 Here is how much of TeX's memory you used:
- 13902 strings out of 475075
- 225396 string characters out of 5779010
- 611282 words of memory out of 5000000
+ 13912 strings out of 475075
+ 225504 string characters out of 5779010
+ 608282 words of memory out of 5000000
  34944 multiletter control sequences out of 15000+600000
- 523209 words of font info for 115 fonts, out of 8000000 for 9000
+ 523624 words of font info for 120 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 74i,6n,81p,1011b,633s stack positions out of 10000i,1000n,20000p,200000b,200000s
-{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc}{/usr/l
-ocal/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc}{/usr/local/texlive/2
-022/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/usr/local/texlive/2022/texmf-
-dist/fonts/enc/dvips/lm/lm-rm.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc
-/dvips/lm/lm-mathit.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/
-lm/lmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmbx12.
-pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></usr/
-local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmmi12.pfb></usr/local/texl
-ive/2022/texmf-dist/fonts/type1/public/lm/lmr10.pfb></usr/local/texlive/2022/te
-xmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/local/texlive/2022/texmf-dist/fo
-nts/type1/public/lm/lmr17.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/p
-ublic/lm/lmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lms
-y10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></u
-sr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></usr/local/t
-exlive/2022/texmf-dist/fonts/type1/public/lm/lmtt8.pfb>
-Output written on written_report.pdf (8 pages, 331679 bytes).
+ 74i,6n,81p,1011b,651s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/local/texlive/2022/texmf-dist/fonts
+/enc/dvips/lm/lm-ts1.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm
+/lm-ec.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
+}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{/usr/loc
+al/texlive/2022/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}</usr/local/texlive/202
+2/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></usr/local/texlive/2022/texmf-di
+st/fonts/type1/public/lm/lmbx12.pfb></usr/local/texlive/2022/texmf-dist/fonts/t
+ype1/public/lm/lmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/publi
+c/lm/lmmi12.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr10
+.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr12.pfb></usr/
+local/texlive/2022/texmf-dist/fonts/type1/public/lm/lmr17.pfb></usr/local/texli
+ve/2022/texmf-dist/fonts/type1/public/lm/lmr7.pfb></usr/local/texlive/2022/texm
+f-dist/fonts/type1/public/lm/lmsy10.pfb></usr/local/texlive/2022/texmf-dist/fon
+ts/type1/public/lm/lmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/pu
+blic/lm/lmtt10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/lm/lm
+tt8.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols
+/msbm10.pfb>
+Output written on written_report.pdf (8 pages, 337168 bytes).
 PDF statistics:
- 240 PDF objects out of 1000 (max. 8388607)
- 180 compressed objects within 2 object streams
+ 245 PDF objects out of 1000 (max. 8388607)
+ 183 compressed objects within 2 object streams
  34 named destinations out of 1000 (max. 500000)
  28795 words of extra memory for PDF output out of 29859 (max. 10000000)
 
