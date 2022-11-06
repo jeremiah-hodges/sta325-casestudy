@@ -58,7 +58,7 @@ library(sjPlot)
 
 ### Introduction
 
-In fluid mechanics flows are either turbulent or laminar. Turbulent flows is characterized by random and chaotic motion, whereas laminar flow is predictable and orderly. Turbulent flow has various applications in air pollution, chemical reactions and heat transfer. In an idealized turbulence the clustering of particles is affected by fluid turbulence (Reynolds number $Re$), gravitational acceleration (Froude number $Fr$) and particles' characteristics (Stokes number $St$). We wish to develop a model that describes that predicts the first four raw moments ( $\mathop{\mathbb{E}[X]}$ ,  $\mathop{\mathbb{E}[X^2]}$ , $\mathop{\mathbb{E}[X^3]}$ , $\mathop{\mathbb{E}[X^4]}$) of a particles cluster volume distribution based off the clustering's Reynolds, Forude, and Stokes number.
+In fluid mechanics flows are either turbulent or laminar. Turbulent flows is characterized by random and chaotic motion, whereas laminar flow is predictable and orderly. Turbulent flow has various applications in air pollution, chemical reactions and heat transfer. In an idealized turbulence the clustering of particles is affected by fluid turbulence (Reynolds number $Re$), gravitational acceleration (Froude number $Fr$) and particles' characteristics (Stokes number $St$). We wish to develop a model that predicts the first four raw moments ( $\mathop{\mathbb{E}[X]}$ ,  $\mathop{\mathbb{E}[X^2]}$ , $\mathop{\mathbb{E}[X^3]}$ , $\mathop{\mathbb{E}[X^4]}$) of a particles cluster volume distribution based off the clustering's Reynolds, Forude, and Stokes number.
 
 
 ### Data Introduction
