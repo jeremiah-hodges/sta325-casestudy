@@ -432,7 +432,7 @@ plot_model(model_3, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90
 plot_model(model_3, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
 ```
 Second plot:
-Once again, we see essentially the same relationship between St and the third moment as we do between St and the second moment. Thus, higher Fr and higher Re decreases skewness. However, the slope of the red lines is always positive. Thus, in this case, St appears to lengthen the right handed tail even as variance decreases due to Fr and Re. Thus, we can see that in a limited way, particle size increases the chances of rare high-clustering events within certain fixed conditions (where variance is limited overall by Fr and Re).
+Once again, we see essentially the same relationship between St and the third moment as we do between St and the second moment. Thus, higher Fr and higher Re decreases skewness. However, the slope of the red lines is always positive. Thus, in this case, St appears to push the distribution to the left (positive skewness means left lean and negative skewness means right lean) as variance decreases due to Fr and Re. Thus, we can see that in a limited way, particle size decreases clustering within certain fixed conditions.
 
 ```{r}
 coef(step.model.three$finalModel, 10)
