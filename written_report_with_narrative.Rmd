@@ -1,7 +1,6 @@
 ---
 title: "Case Study"
-author: "Abdel Shehata"
-date: "2022-10-26"
+author: "Abdel Shehata, Jeremiah Hodges, Francis de Beixedon"
 output:
   pdf_document:
     fig_height: 4
@@ -90,14 +89,12 @@ Upon viewing the data, we encountered several challenges. First the Re and Fr va
 ## Methodology
 
 We began by fitting linear models to help us form intuitions to guide more complex and accurate models that will be more useful for prediction and more detailed interpretation. We fit one set of linear models based off of all the given predictors and another set that included all possible two-way interactions. We used bidirectional selection to narrow down variables to only include the most effective ones. Then, we compared the plain linear models to the ones with interactions.
-
 | Linear R-Squared | No Interactions | Interactions |     |
 |------------------|-----------------|--------------|-----|
 | **R_1**          | 0.6054832       | 0.6282726    |     |
 | **R_2**          | 0.1716913       | 0.2754936    |     |
 | **R_3**          | 0.161867        | 0.2650636    |     |
 | **R_4**          | 0.1539926       | 0.2466392    |     |
-
 It seems that the interactions are increasingly helpful when explaining variation (by the R\^2 value). Adding interactions to the first moment model does not help improve fit much. However, for the third through fourth moments, there is a pretty significant increase in R\^2 when comparing the strictly linear models versus the ones with interactions. Thus, to improve model fit we should pay attention to interactions and nonlinear relationships between the predictors and response variables.
 
 ```{r}
@@ -126,6 +123,7 @@ Nonetheless, there is a clear pattern to the residuals plot. First we underestim
 ### Methodology for Complex Models
 
 We started with a "full model" that includes the maximum number of two- and three-way interactions between TFr, Re, and St (including up to degree 2), fitted using least squares regression. Because two of the predictors have few unique observations and St already seems to have a linear relationship to the moments (as discovered through our linear regressions), we used only a 2nd degree polynomial. 2nd degree polynomials only need a minimum of 3 unique values to solve. Because the polynomial is relatively low degree, we are not worried about erratic behavior of the model and did not use a spline or smoothing method (when we did attempt to use these, they did not offer much better performance in terms of R^2 and error reduction). To increase our flexibility and capture nonlinear behavior between interactions, we considered many interactions, up to degree two. Nonetheless, from the "full model", we utilized a sequential forward stepwise selection method to select only the variables that decrease mean squared error (estimated by LOOCV) until we believe any added variables overfit the model.
+
 ### Model Evaluation
 
 ```{r}
