@@ -1,0 +1,84 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+```{r, echo=FALSE, message=FALSE}
+#| label: load-pkg-data
+#| message: false
+#| warning: false
+
+library(tidyverse)
+library(tidymodels)
+library(dplyr)
+library(ggplot2)
+library(cowplot)
+library(knitr)
+library(recipes)
+library(caret)
+library(InformationValue)
+library(ISLR)
+library(MASS)
+library(nnet)
+library(Stat2Data)
+library(GGally)
+library(leaps)
+library(arm)
+library(MASS)
+library(stats)
+library(car)
+library(boot)
+library(arm)
+library(gam)
+library(sjPlot)
+```
+
+
+```{r}
+library(readr)
+data_train <- read_csv("data-train.csv")
+
+attach(data_train)
+data_train <- data_train%>% mutate(TFr = case_when(Fr>1~ .99999, Fr<1~Fr))
+data_train<-data_train%>%mutate(TFr=logit(TFr))
+```
+
+
+```{r}
+model_1<-lm(R_moment_1~I(Re^2)+St+Re+I(Re^2)*St+St:Re,data=data_train)
+summary(model_1)
+plot_model(model_1, type = "pred", terms = c("Re","St[.05,.7,1.4]"))
+
+```
+This plot of the effect of Re on the first moment using the nonlinear model with interactions sheds light on the relationship between Re and the first moment. First, as we determined with the simple linear model, St has a positive relationship with the first moment. The impact of Re on the first moment is higher at each level of Re if St increases. However, this plot shows that as Re grows beyond roughly 50000, its marginal influence on the first moment increases. Thus, at very high values R seems to have a nonlinear relationship to the average expected amount of clustering.
+
+```{r}
+model_2<-lm(R_moment_2~Re*TFr*St+I(TFr^2):I(Re^2)+I(TFr^2):St +I(TFr^2)+I(Re^2)-Re:TFr:St,data=data_train)
+summary(model_2)
+plot_model(model_2, type = "pred", terms = c("Re", "St[.05,.7,1.4]", "TFr[-.84,-2.9,11.5]"))
+plot_model(model_2, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+```
+
+First plots:
+These plots show us a relationship that later holds true in the second and third moments as well. First, we can see by the blue and green lines that regardless of the level of Re and St, higher levels of Fr decrease the variance of clustering. We saw this relationship in the previous set of plots. The most interesting line to observe is the red one that shows what happens to variance as St changes at near-zero Fr. As Re increases, the effect of St converges to essentially nothing. Combined with what we learn about the first moment (that at extremely high levels of Re, average clustering increases), perhaps this means that Re becomes the most important determinant of clustering as it reaches high levels. At very high Re, we may see consistent clustering regardless of the other variables. Nonetheless, if Re is low (90 or 224), St contributes to increases in variance. Thus, at low Re and Fr, not only does St increase average clustering (as we observed in the linear models), it does so with a great deal of variance. This probably reflects the fact that particles colliding does increase in frequency as they grow in size, but collisions are very unpredictable and random events; sometimes they lead to clustering and other times they do not.
+
+Second plots:
+From these plots of the second model, we can first notice a significant amount of overlap of error bounds in all three plots regardless of the level of St. Thus, when it comes to variance, the influence of the size of the particles is not particularly important. We can also see that the convergence of the fits tightens at TFr = 11.5 (Fr = inf). Because Fr = u/sqrt(gL), it makes sense that u (flow velocity) must be relatively large for Fr to be infinite (find any source). At high rates of flow may consistently break up the clusters and thus preventing the occasional examples of high levels of clustering. We also see that high Fr may limit the influence of Re. At near-zero Fr (TFr = -.84), high Re has a strong positive relationship with variance. Additionally, Re seems to exhibit some kind of thresholding behavior past Re = 224 where its relationship with variance reverses past this point. Re = 224 appears to be a special value worth studying more in the future.
+
+```{r}
+model_3<-lm(R_moment_3~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+summary(model_3)
+plot_model(model_3, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+```
+Once again, we see essentially the same relationship between St and the third moment as we do between St and the second moment. Thus, higher Fr and higher Re decreases skewness. However, the slope of the red lines is always positive. Thus, in this case, St appears to lengthen the right handed tail even as variance decreases due to Fr and Re. Thus, we can see that in a limited way, particle size increases the chances of rare high-clustering events within certain fixed conditions (where variance is limited overall by Fr and Re).
+
+```{r}
+model_4<-lm(R_moment_4~I(TFr^2)*I(Re^2)+St*TFr+Re*TFr+I(TFr^2):St,data=data_train)
+summary(model_4)
+plot_model(model_4, type = "pred", terms = c("St", "TFr[-.84,-2.9,11.5]", "Re[90,224,398]"))
+```
+
+The relationship between the predictors and kurtosis essentially seems identical to their relationship with skewness. Nonetheless, the Re = 398 plot is interesting because in this same plot for the second moment, we saw the effects of all variables converge to zero. However, St always has a positive effect on kurtosis as long as Fr is low. Thus, the size of the particles still makes the tails of the probability distribution of clustering heavier. Similar to our analysis of St's relationship to the third moment, it seems to increase the spread of the distribution within bounds set by the other parameters. Thus, as the other parameters make tail weight smaller overall, higher St makes them as small as possible within those bounds. I believe that this makes sense because Fr and Re seem to be more related to the environment than St, which has to do with the particles themselves. Given certain environmental parameters that limit the amount of variance overall, larger particle size will always increase the chance for rare events of high levels of clustering within the bounds of possibility.
+
+#Conclusion:
+In conclusion, we have learned that St and the first moment have a mostly positive and linear relationship, although predictive accuracy can increase if we use a more complex model that includes interactions. Through the model with interactions, we saw that extremely high values of Re will increase average clustering. The other moments are best fitted with models that involve complex interactions and exponential terms due to their inherent nonlinearity. In general, high levels of Fr and Re decrease variance, skewness, and kurtosis. These parameters seem to make the results of the simulation more regular and consistent. On the other hand, St pushes for more positive skewness and kurtosis. I believe that this probably has to do with the inherently chaotic and unpredictable nature of collisions between particles. Lastly, with regards to variance, we saw Re = 224 exhibits some kind of thresholding behavior because its effect on variance switches at that point. In addition to this mystery, the specific relationship between Re and Fr is also worth further consideration. Intuitively, as Fr increases I would expect clustering behavior to become more regular because high flow probably cuts short any particularly unusual behavior of particles. However, Re when combined with Fr also seems to concentrate the probability of clustering around the mean. Theoretically, I would expect Re to both increase mean clustering and lead to less predictable behavior. Perhaps our results mean that high levels of Re in fact leads to more clustering, albeit in very consistent ways.
